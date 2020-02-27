@@ -1,0 +1,654 @@
+--- ./Build.PL.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./Build.PL	2020-02-27 06:57:15.410223000 +0000
+@@ -109,16 +109,7 @@
+         if !$cpanm;
+     my @cpanm_args = ();
+     push @cpanm_args, "--sudo" if $sudo;
+-    
+-    # install local::lib without --local-lib otherwise it's not usable afterwards
+-    if (!eval "use local::lib qw(local-lib); 1") {
+-        my $res = system $cpanm, @cpanm_args, 'local::lib';
+-        warn "Warning: local::lib is required. You might need to run the `cpanm --sudo local::lib` command in order to install it.\n"
+-            if $res != 0;
+-    }
+-    
+-    push @cpanm_args, ('--local-lib', 'local-lib');
+-    
++
+     # make sure our cpanm is updated (old ones don't support the ~ syntax)
+     system $cpanm, @cpanm_args, 'App::cpanminus';
+     
+--- ./t/fill.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/fill.t	2020-02-27 07:20:40.919524000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum max);
+--- ./t/combineinfill.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/combineinfill.t	2020-02-27 07:20:40.674222000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/threads.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/threads.t	2020-02-27 07:20:40.695807000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/bridges.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/bridges.t	2020-02-27 07:20:40.939175000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum);
+--- ./t/retraction.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/retraction.t	2020-02-27 07:20:40.706241000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(any);
+--- ./t/custom_gcode.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/custom_gcode.t	2020-02-27 07:20:40.776438000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/print.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/print.t	2020-02-27 07:20:40.899542000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/flow.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/flow.t	2020-02-27 07:20:40.945540000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum);
+--- ./t/slice.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/slice.t	2020-02-27 07:20:40.852109000 +0000
+@@ -7,8 +7,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ # temporarily disable compilation errors due to constant not being exported anymore
+--- ./t/multi.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/multi.t	2020-02-27 07:20:40.747018000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/clean_polylines.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/clean_polylines.t	2020-02-27 07:20:40.756703000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/layers.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/layers.t	2020-02-27 07:20:40.786562000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/gcode.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/gcode.t	2020-02-27 07:20:40.844995000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/support.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/support.t	2020-02-27 07:20:40.886350000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/pressure.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/pressure.t	2020-02-27 07:20:40.951946000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw();
+--- ./t/shells.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/shells.t	2020-02-27 07:20:40.932779000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum);
+--- ./t/clipper.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/clipper.t	2020-02-27 07:20:40.736856000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(sum);
+--- ./t/thin.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/thin.t	2020-02-27 07:20:40.817954000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/angles.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/angles.t	2020-02-27 07:20:40.766357000 +0000
+@@ -6,10 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use lib "$FindBin::Bin/../lib";
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+@@ -92,4 +89,4 @@
+ sub line_direction {
+     my ($l) = @_;
+     return Slic3r::Line->new(@$l)->direction;
+-}
+\ No newline at end of file
++}
+--- ./t/avoid_crossing_perimeters.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/avoid_crossing_perimeters.t	2020-02-27 07:20:40.905972000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum);
+--- ./t/collinear.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/collinear.t	2020-02-27 07:20:40.796855000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/config.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/config.t	2020-02-27 07:20:40.872477000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/polyclip.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/polyclip.t	2020-02-27 07:20:40.879290000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/geometry.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/geometry.t	2020-02-27 07:20:40.912650000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/cooling.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/cooling.t	2020-02-27 07:20:40.662042000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(none all);
+--- ./t/vibrationlimit.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/vibrationlimit.t	2020-02-27 07:20:40.684895000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/perimeters.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/perimeters.t	2020-02-27 07:20:40.807567000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r::ExtrusionLoop ':roles';
+--- ./t/arcs.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/arcs.t	2020-02-27 07:20:40.926016000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/loops.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/loops.t	2020-02-27 07:20:40.858951000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./t/skirt_brim.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/skirt_brim.t	2020-02-27 07:20:40.892897000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/adaptive_slicing.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/adaptive_slicing.t	2020-02-27 07:20:40.837687000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first sum);
+--- ./t/adaptive_width.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/adaptive_width.t	2020-02-27 07:20:40.726721000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/speed.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/speed.t	2020-02-27 07:20:40.865787000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(none);
+--- ./t/gaps.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/gaps.t	2020-02-27 07:20:40.827898000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use List::Util qw(first);
+--- ./t/svg.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./t/svg.t	2020-02-27 07:20:40.716596000 +0000
+@@ -4,8 +4,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./lib/Slic3r.pm.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./lib/Slic3r.pm	2020-02-27 07:20:40.958574000 +0000
+@@ -43,9 +43,9 @@
+ 
+ use FindBin;
+ # Path to the images.
+-my $varpath = decode_path($FindBin::Bin) . "/var";
++my $varpath = decode_path($FindBin::RealBin) . "/var";
+ if ($^O eq 'darwin' && !-d $varpath) {
+-    $varpath = decode_path($FindBin::Bin) . "/../Resources/var";
++    $varpath = decode_path($FindBin::RealBin) . "/../Resources/var";
+ }
+ our $var = sub { "$varpath/$_[0]" };
+ 
+--- ./lib/Slic3r/GUI.pm.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./lib/Slic3r/GUI.pm	2020-02-27 07:20:41.002367000 +0000
+@@ -179,7 +179,7 @@
+     
+     # load init bundle
+     {
+-        my @dirs = ($FindBin::Bin);
++        my @dirs = ($FindBin::RealBin);
+         if (&Wx::wxMAC) {
+             push @dirs, qw();
+         } elsif (&Wx::wxMSW) {
+--- ./slic3r.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./slic3r.pl	2020-02-27 07:20:40.648786000 +0000
+@@ -5,8 +5,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/lib";
+-    use local::lib '--no-create', "$FindBin::Bin/local-lib";
++    use lib "$FindBin::RealBin/lib";
+ }
+ 
+ use File::Basename qw(basename);
+@@ -78,9 +77,9 @@
+         $configfile = Slic3r::decode_path($configfile);
+         if (-e Slic3r::encode_path($configfile)) {
+             push @external_configs, Slic3r::Config->load($configfile);
+-        } elsif (-e Slic3r::encode_path("$FindBin::Bin/$configfile")) {
+-            printf STDERR "Loading $FindBin::Bin/$configfile\n";
+-            push @external_configs, Slic3r::Config->load("$FindBin::Bin/$configfile");
++        } elsif (-e Slic3r::encode_path("$FindBin::RealBin/$configfile")) {
++            printf STDERR "Loading $FindBin::RealBin/$configfile\n";
++            push @external_configs, Slic3r::Config->load("$FindBin::RealBin/$configfile");
+         } else {
+             $opt{ignore_nonexistent_config} or die "Cannot find specified configuration file ($configfile).\n";
+         }
+--- ./xs/t/18_motionplanner.t.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./xs/t/18_motionplanner.t	2020-02-27 07:20:41.073606000 +0000
+@@ -5,7 +5,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../../lib";
++    use lib "$FindBin::RealBin/../../lib";
+ }
+ 
+ use Slic3r::XS;
+--- ./utils/stl-to-amf.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/stl-to-amf.pl	2020-02-27 07:20:41.106495000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use File::Basename qw(basename);
+--- ./utils/split_stl.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/split_stl.pl	2020-02-27 07:20:41.150549000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use File::Basename qw(basename);
+--- ./utils/config-bundle-to-config.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/config-bundle-to-config.pl	2020-02-27 07:20:41.120919000 +0000
+@@ -8,8 +8,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
+--- ./utils/send-gcode.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/send-gcode.pl	2020-02-27 07:20:41.130557000 +0000
+@@ -5,8 +5,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./utils/wireframe.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/wireframe.pl	2020-02-27 07:20:41.146874000 +0000
+@@ -7,8 +7,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
+--- ./utils/gcode_sectioncut.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/gcode_sectioncut.pl	2020-02-27 07:20:41.125812000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
+--- ./utils/estimate-gcode-time.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/estimate-gcode-time.pl	2020-02-27 07:20:41.143102000 +0000
+@@ -5,8 +5,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./utils/dump-stl.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/dump-stl.pl	2020-02-27 07:20:41.134895000 +0000
+@@ -7,8 +7,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Slic3r;
+--- ./utils/view-toolpaths.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/view-toolpaths.pl	2020-02-27 07:20:41.111439000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
+--- ./utils/view-mesh.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/view-mesh.pl	2020-02-27 07:20:41.093907000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
+--- ./utils/amf-to-stl.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/amf-to-stl.pl	2020-02-27 07:20:41.116334000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use File::Basename qw(basename);
+--- ./utils/pdf-slices.pl.orig	2020-01-27 06:19:45.000000000 +0000
++++ ./utils/pdf-slices.pl	2020-02-27 07:20:41.139164000 +0000
+@@ -6,8 +6,7 @@
+ 
+ BEGIN {
+     use FindBin;
+-    use lib "$FindBin::Bin/../lib";
+-    use local::lib "$FindBin::Bin/../local-lib";
++    use lib "$FindBin::RealBin/../lib";
+ }
+ 
+ use Getopt::Long qw(:config no_auto_abbrev);
