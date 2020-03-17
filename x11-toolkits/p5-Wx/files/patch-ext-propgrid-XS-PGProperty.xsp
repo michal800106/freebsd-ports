@@ -1,0 +1,20 @@
+--- ext/propgrid/XS/PGProperty.xsp.orig
++++ ext/propgrid/XS/PGProperty.xsp
+@@ -1115,7 +1115,7 @@ public:
+ 
+     bool SetPlValue( wxColourPropertyValue* col, int flags = wxPG_SETVAL_REFRESH_EDITOR )
+       %code{%
+-            wxVariant value = wxVariant(*col);
++            wxVariant value = wxVariant((const wxAny&)*col);
+             THIS->SetValue(value, NULL, flags );
+             RETVAL = true;
+       %};
+@@ -1148,7 +1148,7 @@ public:
+     bool SetPlValue( wxColour* col, int flags = wxPG_SETVAL_REFRESH_EDITOR )
+       %code{%
+             if( col->IsOk() ) {
+-                wxVariant value = wxVariant(*col);
++                wxVariant value = wxVariant((const wxAny&)*col);
+                 THIS->SetValue(value, NULL, flags );
+                 RETVAL = true;
+             } else {

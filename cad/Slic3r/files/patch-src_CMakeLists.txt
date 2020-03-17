@@ -1,0 +1,10 @@
+*** src/CMakeLists.txt.orig	Tue Feb 25 15:48:44 2020
+--- src/CMakeLists.txt	Tue Feb 25 15:48:04 2020
+***************
+*** 562,564 ****
+--- 562,566 ----
+  if (BUILD_EXTRUDE_TIN)
+      target_link_libraries (extrude-tin libslic3r ${LIBSLIC3R_DEPENDS})
+  endif()
++ 
++ install(TARGETS slic3r RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}")
